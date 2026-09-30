@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suivi poids &amp; cycle — HER DECODE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#6D28D9; --accent-soft:#F3EEFF; --accent-line:#DDD1FA;
+  --ctx:#A1A1AA;
+  --bg:#FAFAFA; --card:#FFFFFF; --ink:#18181B; --muted:#71717A;
+  --line:#E4E4E7; --warn-bg:#FFFBEB; --warn-line:#FCD34D; --warn-ink:#78350F;
+  --ok:#059669;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 56px}
+
+header.hero{
+  background:linear-gradient(135deg,#1b1430 0%,#111827 100%);
+  color:#fff;padding:36px 0 30px;margin-bottom:20px;position:relative;overflow:hidden;
+}
+header.hero:after{
+  content:"";position:absolute;top:-110px;right:-70px;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(109,40,217,.5) 0%,rgba(109,40,217,0) 70%);
+}
+header.hero .wrap{padding-bottom:0;position:relative;z-index:1}
+.badge{
+  display:inline-block;background:var(--accent);color:#fff;
+  font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  padding:5px 10px;border-radius:5px;
+}
+h1{font-size:25px;line-height:1.22;margin:12px 0 8px;font-weight:700}
+header.hero p{margin:0;font-size:14px;color:#D4D4D8;max-width:420px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 16px;margin-bottom:14px}
+.eyebrow{text-transform:uppercase;letter-spacing:.09em;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:10px}
+h2{font-size:17px;margin:0 0 4px;font-weight:650}
+.sub{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+
+.row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.field{flex:1 1 0;min-width:112px}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+input,select{
+  width:100%;font-family:inherit;font-size:16px;color:var(--ink);
+  padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;
+}
+input:focus,select:focus{outline:2px solid var(--accent-line);outline-offset:1px;border-color:var(--accent)}
+button{
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  padding:11px 15px;border-radius:8px;border:1px solid var(--accent);
+  background:var(--accent);color:#fff;white-space:nowrap;
+}
+button:active{transform:translateY(1px)}
+button.ghost{background:#fff;color:var(--accent)}
+button.small{font-size:12.5px;padding:8px 11px}
+
+ul.entries{list-style:none;margin:14px 0 0;padding:0;font-size:14px}
+ul.entries li{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:9px 0;border-top:1px solid var(--line);
+}
+ul.entries li span.meta{color:var(--muted);font-size:12.5px}
+.del{background:none;border:none;color:var(--muted);font-size:18px;line-height:1;padding:2px 6px;cursor:pointer}
+.empty{font-size:13.5px;color:var(--muted);font-style:italic;margin:12px 0 0}
+
+figure{margin:0}
+figcaption{font-size:12.5px;color:var(--muted);margin-top:8px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:10px 0 14px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+td.num{font-variant-numeric:tabular-nums;font-weight:600}
+td.delta{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+
+.callout{border-left:4px solid var(--warn-line);background:var(--warn-bg);color:var(--warn-ink);padding:13px 15px;border-radius:0 8px 8px 0;font-size:13.5px;margin:0 0 14px}
+.callout b{font-weight:650}
+.callout.accent{border-left-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+
+textarea{
+  width:100%;height:96px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11.5px;padding:10px;border:1px solid var(--line);border-radius:8px;
+  background:#FCFCFD;color:var(--muted);resize:vertical;
+}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(90px);
+  background:var(--ink);color:#fff;font-size:13.5px;font-weight:500;
+  padding:11px 18px;border-radius:999px;transition:transform .25s ease;z-index:50;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+footer{text-align:center;color:var(--muted);font-size:11px;padding:26px 0 0;text-transform:uppercase;letter-spacing:.09em}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">HER DECODE · Saison 1</span>
+    <h1>Ton poids, ton cycle</h1>
+    <p>Compare le même jour de cycle d'un mois sur l'autre. C'est la seule comparaison qui t'apprend quelque chose.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="callout">
+    <b>Tes données restent sur ton téléphone.</b> Rien n'est envoyé nulle part, je n'y ai pas accès.
+    En contrepartie, si tu changes de téléphone ou que tu vides ton navigateur, tout disparaît —
+    fais une sauvegarde en bas de page.
+  </div>
+
+  <!-- ===== RÈGLES ===== -->
+  <section class="card">
+    <div class="eyebrow">Étape 1</div>
+    <h2>Tes débuts de règles</h2>
+    <p class="sub">Le premier jour de tes règles, c'est le jour 1 de ton cycle. Ajoute-le à chaque fois.</p>
+    <div class="row">
+      <div class="field">
+        <label for="pDate">Premier jour</label>
+        <input type="date" id="pDate">
+      </div>
+      <button id="addP">Ajouter</button>
+    </div>
+    <ul class="entries" id="pList"></ul>
+    <p class="empty" id="pEmpty">Aucune date pour l'instant.</p>
+  </section>
+
+  <!-- ===== PESÉES ===== -->
+  <section class="card">
+    <div class="eyebrow">Étape 2</div>
+    <h2>Tes pesées</h2>
+    <p class="sub">Le matin, à jeun, après être passée aux toilettes. Toujours dans les mêmes conditions.</p>
+    <div class="row">
+      <div class="field">
+        <label for="wDate">Date</label>
+        <input type="date" id="wDate">
+      </div>
+      <div class="field">
+        <label for="wKg">Poids (kg)</label>
+        <input type="number" id="wKg" step="0.1" min="20" max="250" inputmode="decimal" placeholder="62.4">
+      </div>
+      <button id="addW">Ajouter</button>
+    </div>
+    <ul class="entries" id="wList"></ul>
+    <p class="empty" id="wEmpty">Aucune pesée pour l'instant.</p>
+  </section>
+
+  <!-- ===== LE REPÈRE ===== -->
+  <section class="card">
+    <div class="eyebrow">Ce qui compte vraiment</div>
+    <h2>Ton repère, d'un cycle à l'autre</h2>
+    <p class="sub">Choisis un jour de cycle et compare-le à lui-même, mois après mois.</p>
+    <div class="row">
+      <div class="field" style="max-width:150px">
+        <label for="refDay">Jour de cycle</label>
+        <select id="refDay"></select>
+      </div>
+    </div>
+    <div id="refOut"></div>
+  </section>
+
+  <!-- ===== GRAPHIQUE ===== -->
+  <section class="card">
+    <div class="eyebrow">Ton schéma</div>
+    <h2>Poids par jour de cycle</h2>
+    <p class="sub">Chaque courbe est un cycle. Si un motif se répète, tu le verras ici.</p>
+    <div class="legend">
+      <span><i style="background:#6D28D9"></i>Cycle en cours</span>
+      <span><i style="background:#A1A1AA"></i>Cycles précédents</span>
+    </div>
+    <figure>
+      <div id="chart"></div>
+      <figcaption id="chartCap"></figcaption>
+    </figure>
+  </section>
+
+  <!-- ===== SAUVEGARDE ===== -->
+  <section class="card">
+    <div class="eyebrow">Important</div>
+    <h2>Sauvegarde tes données</h2>
+    <p class="sub">Copie ce texte et colle-le dans tes notes. Pour tout récupérer plus tard, recolle-le ici et clique sur Restaurer.</p>
+    <textarea id="backup" spellcheck="false"></textarea>
+    <div class="actions">
+      <button class="small" id="copyBtn">Copier ma sauvegarde</button>
+      <button class="small ghost" id="restoreBtn">Restaurer</button>
+      <button class="small ghost" id="wipeBtn">Tout effacer</button>
+    </div>
+  </section>
+
+  <div class="callout accent">
+    <b>Un rappel de l'épisode 1 :</b> une variation de quelques centaines de grammes au fil du cycle,
+    ce n'est pas de la masse grasse. La masse grasse ne bouge pas à cette vitesse-là.
+    Ne conclus rien avant deux ou trois cycles.
+  </div>
+
+  <footer>@indianaafit</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+
+var KEY = "herdecode_cycle_v1";
+var state = { periods: [], weights: [] };
+
+/* ---------- storage (best effort) ---------- */
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var p = JSON.parse(raw);
+      if(p && Array.isArray(p.periods) && Array.isArray(p.weights)) state = p;
+    }
+  }catch(e){ /* mode privé, stockage bloqué : on continue en mémoire */ }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+}
+
+/* ---------- helpers ---------- */
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+function d(s){ var a = s.split("-"); return new Date(+a[0], +a[1]-1, +a[2]); }
+function days(a,b){ return Math.round((d(b)-d(a))/86400000); }
+function fmt(s){
+  var m = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  var a = s.split("-"); return (+a[2]) + " " + m[+a[1]-1] + " " + a[0];
+}
+function today(){
+  var n = new Date(), p = function(x){ return (x<10?"0":"")+x; };
+  return n.getFullYear()+"-"+p(n.getMonth()+1)+"-"+p(n.getDate());
+}
+
+/* ---------- le calcul central : jour de cycle ---------- */
+function cycles(){
+  var ps = state.periods.slice().sort();
+  return ps.map(function(start, i){
+    var end = ps[i+1] || null;
+    var pts = state.weights.filter(function(w){
+      return w.date >= start && (end === null || w.date < end);
+    }).map(function(w){
+      return { day: days(start, w.date) + 1, kg: w.kg, date: w.date };
+    }).filter(function(p){ return p.day >= 1 && p.day <= 60; })
+      .sort(function(a,b){ return a.day - b.day; });
+    return { n: i+1, start: start, points: pts };
+  }).filter(function(c){ return c.points.length > 0; });
+}
+
+/* ---------- listes ---------- */
+function renderLists(){
+  var pl = document.getElementById("pList"), pe = document.getElementById("pEmpty");
+  pl.innerHTML = "";
+  var ps = state.periods.slice().sort().reverse();
+  pe.style.display = ps.length ? "none" : "block";
+  ps.forEach(function(s){
+    var li = document.createElement("li");
+    li.innerHTML = '<span>'+fmt(s)+'</span>';
+    var b = document.createElement("button");
+    b.className = "del"; b.type = "button"; b.textContent = "×";
+    b.setAttribute("aria-label","Supprimer");
+    b.onclick = function(){
+      state.periods = state.periods.filter(function(x){ return x !== s; });
+      save(); renderAll();
+    };
+    li.appendChild(b); pl.appendChild(li);
+  });
+
+  var wl = document.getElementById("wList"), we = document.getElementById("wEmpty");
+  wl.innerHTML = "";
+  var ws = state.weights.slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+  we.style.display = ws.length ? "none" : "block";
+  ws.slice(0,12).forEach(function(w){
+    var cs = cycles(), tag = ' · <span style="color:#B45309">hors cycle</span>';
+    for(var i=0;i<cs.length;i++){
+      var hit = cs[i].points.filter(function(p){ return p.date === w.date; })[0];
+      if(hit){ tag = " · cycle " + cs[i].n + ", jour " + hit.day; break; }
+    }
+    var li = document.createElement("li");
+    li.innerHTML = '<span><strong>'+w.kg.toFixed(1)+' kg</strong> <span class="meta">'+fmt(w.date)+tag+'</span></span>';
+    var b = document.createElement("button");
+    b.className = "del"; b.type = "button"; b.textContent = "×";
+    b.setAttribute("aria-label","Supprimer");
+    b.onclick = function(){
+      state.weights = state.weights.filter(function(x){ return !(x.date===w.date && x.kg===w.kg); });
+      save(); renderAll();
+    };
+    li.appendChild(b); wl.appendChild(li);
+  });
+  if(ws.length > 12){
+    var li = document.createElement("li");
+    li.innerHTML = '<span class="meta">… et '+(ws.length-12)+' autres pesées enregistrées</span>';
+    wl.appendChild(li);
+  }
+}
+
+/* ---------- le repère ---------- */
+function renderRef(){
+  var sel = document.getElementById("refDay"), out = document.getElementById("refOut");
+  var cs = cycles();
+
+  if(!sel.options.length){
+    for(var i=1;i<=60;i++){
+      var o = document.createElement("option");
+      o.value = i; o.textContent = "Jour " + i;
+      if(i===5) o.selected = true;
+      sel.appendChild(o);
+    }
+  }
+  var target = +sel.value || 5;
+
+  if(cs.length < 1){
+    out.innerHTML = '<p class="empty">Ajoute au moins un début de règles et une pesée.</p>';
+    return;
+  }
+
+  var rows = cs.map(function(c){
+    var best = null, bd = 99;
+    c.points.forEach(function(p){
+      var dist = Math.abs(p.day - target);
+      if(dist < bd){ bd = dist; best = p; }
+    });
+    return (best && bd <= 2) ? { n:c.n, start:c.start, kg:best.kg, day:best.day, off:bd } : null;
+  }).filter(Boolean);
+
+  if(rows.length === 0){
+    out.innerHTML = '<p class="empty">Aucune pesée autour du jour '+target+'. Essaie un autre jour, ou pèse-toi à ce moment-là au prochain cycle.</p>';
+    return;
+  }
+
+  var html = '<table><thead><tr><th>Cycle</th><th>Poids</th><th>Écart</th></tr></thead><tbody>';
+  rows.forEach(function(r, i){
+    var delta = "—";
+    if(i > 0){
+      var v = r.kg - rows[i-1].kg;
+      delta = (v > 0 ? "+" : "") + v.toFixed(1) + " kg";
+    }
+    var note = r.off === 0 ? ("jour " + r.day) : ("jour " + r.day + ", au plus près");
+    html += '<tr><td>Cycle '+r.n+'<br><span class="meta" style="font-size:12px;color:#71717A">'+note+'</span></td>'
+          + '<td class="num">'+r.kg.toFixed(1)+' kg</td>'
+          + '<td class="delta">'+delta+'</td></tr>';
+  });
+  html += '</tbody></table>';
+
+  if(rows.length < 3){
+    html += '<p class="empty">Il te faut au moins trois cycles avant de conclure quoi que ce soit.</p>';
+  }
+  out.innerHTML = html;
+}
+
+/* ---------- graphique ---------- */
+function renderChart(){
+  var host = document.getElementById("chart"), cap = document.getElementById("chartCap");
+  var cs = cycles();
+  var withEnough = cs.filter(function(c){ return c.points.length >= 2; });
+
+  if(withEnough.length === 0){
+    host.innerHTML = '<p class="empty">Il faut au moins deux pesées dans un même cycle pour tracer une courbe.</p>';
+    cap.textContent = "";
+    return;
+  }
+
+  var W = 520, H = 250, mL = 44, mR = 16, mT = 14, mB = 34;
+  var iw = W - mL - mR, ih = H - mT - mB;
+
+  var all = [], maxDay = 28;
+  withEnough.forEach(function(c){ c.points.forEach(function(p){
+    all.push(p.kg); if(p.day > maxDay) maxDay = p.day;
+  }); });
+  maxDay = Math.min(Math.max(maxDay, 28), 60);
+
+  var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+  var pad = Math.max((hi - lo) * 0.25, 0.4);
+  lo = lo - pad; hi = hi + pad;
+
+  var X = function(day){ return mL + ((day - 1) / (maxDay - 1)) * iw; };
+  var Y = function(kg){ return mT + ih - ((kg - lo) / (hi - lo)) * ih; };
+
+  var s = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Poids par jour de cycle">';
+
+  // grille horizontale + axe Y
+  var ticks = 4;
+  for(var t=0;t<=ticks;t++){
+    var v = lo + (hi - lo) * (t/ticks), y = Y(v);
+    s += '<line x1="'+mL+'" y1="'+y.toFixed(1)+'" x2="'+(W-mR)+'" y2="'+y.toFixed(1)+'" stroke="#E4E4E7" stroke-width="1"/>';
+    s += '<text x="'+(mL-8)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" font-size="10.5" fill="#71717A">'+v.toFixed(1)+'</text>';
+  }
+  // axe X — pas adaptatif : cycles courts par semaine, cycles longs par dizaine
+  var step = maxDay <= 32 ? 7 : (maxDay <= 46 ? 10 : 15);
+  var xTicks = [1];
+  for(var dd = step; dd <= maxDay; dd += step) xTicks.push(dd);
+  if(maxDay - xTicks[xTicks.length-1] >= Math.ceil(step/2)) xTicks.push(maxDay);
+  xTicks.forEach(function(dd){
+    s += '<text x="'+X(dd).toFixed(1)+'" y="'+(H-12)+'" text-anchor="middle" font-size="10.5" fill="#71717A">J'+dd+'</text>';
+  });
+
+  var last = withEnough[withEnough.length-1];
+
+  // cycles précédents (contexte, gris)
+  withEnough.slice(0,-1).forEach(function(c){
+    var pts = c.points.map(function(p){ return X(p.day).toFixed(1)+","+Y(p.kg).toFixed(1); }).join(" ");
+    s += '<polyline points="'+pts+'" fill="none" stroke="#A1A1AA" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    c.points.forEach(function(p){
+      s += '<circle cx="'+X(p.day).toFixed(1)+'" cy="'+Y(p.kg).toFixed(1)+'" r="2.5" fill="#A1A1AA" stroke="#FFFFFF" stroke-width="2"/>';
+    });
+  });
+
+  // cycle en cours (accent)
+  var lp = last.points.map(function(p){ return X(p.day).toFixed(1)+","+Y(p.kg).toFixed(1); }).join(" ");
+  s += '<polyline points="'+lp+'" fill="none" stroke="#6D28D9" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  last.points.forEach(function(p){
+    s += '<circle cx="'+X(p.day).toFixed(1)+'" cy="'+Y(p.kg).toFixed(1)+'" r="4" fill="#6D28D9" stroke="#FFFFFF" stroke-width="2"/>';
+  });
+
+  // étiquette directe sur le dernier point
+  var lastPt = last.points[last.points.length-1];
+  var lx = X(lastPt.day), ly = Y(lastPt.kg);
+  var anchor = (lx > W - 70) ? "end" : "start";
+  var dx = (anchor === "end") ? -9 : 9;
+  s += '<text x="'+(lx+dx).toFixed(1)+'" y="'+(ly-9).toFixed(1)+'" text-anchor="'+anchor+'" font-size="11.5" font-weight="600" fill="#18181B">'+lastPt.kg.toFixed(1)+' kg</text>';
+
+  s += '</svg>';
+  host.innerHTML = s;
+
+  cap.textContent = withEnough.length + (withEnough.length > 1 ? " cycles affichés" : " cycle affiché")
+    + " · échelle verticale resserrée sur tes valeurs, les écarts paraissent donc plus grands qu'ils ne sont.";
+}
+
+/* ---------- sauvegarde ---------- */
+function renderBackup(){
+  document.getElementById("backup").value = JSON.stringify(state);
+}
+
+function renderAll(){ renderLists(); renderRef(); renderChart(); renderBackup(); }
+
+/* ---------- événements ---------- */
+document.getElementById("addP").onclick = function(){
+  var el = document.getElementById("pDate"), v = el.value;
+  if(!v){ toast("Choisis une date"); return; }
+  if(state.periods.indexOf(v) >= 0){ toast("Cette date est déjà là"); return; }
+  state.periods.push(v); save(); el.value = ""; renderAll(); toast("Date ajoutée");
+};
+
+document.getElementById("addW").onclick = function(){
+  var dEl = document.getElementById("wDate"), kEl = document.getElementById("wKg");
+  var v = dEl.value, kg = parseFloat(String(kEl.value).replace(",", "."));
+  if(!v){ toast("Choisis une date"); return; }
+  if(!kg || kg < 20 || kg > 250){ toast("Poids invalide"); return; }
+  state.weights = state.weights.filter(function(x){ return x.date !== v; });
+  state.weights.push({ date: v, kg: Math.round(kg*10)/10 });
+  save(); kEl.value = ""; dEl.value = today(); renderAll(); toast("Pesée enregistrée");
+};
+
+document.getElementById("refDay").onchange = renderRef;
+
+document.getElementById("copyBtn").onclick = function(){
+  var ta = document.getElementById("backup");
+  ta.select(); ta.setSelectionRange(0, 999999);
+  var done = false;
+  try{ done = document.execCommand("copy"); }catch(e){}
+  if(navigator.clipboard && !done){
+    navigator.clipboard.writeText(ta.value).then(function(){ toast("Copié — colle-le dans tes notes"); });
+    return;
+  }
+  toast(done ? "Copié — colle-le dans tes notes" : "Sélectionne le texte et copie-le");
+};
+
+document.getElementById("restoreBtn").onclick = function(){
+  try{
+    var p = JSON.parse(document.getElementById("backup").value);
+    if(!p || !Array.isArray(p.periods) || !Array.isArray(p.weights)) throw 0;
+    state = { periods: p.periods, weights: p.weights };
+    save(); renderAll(); toast("Données restaurées");
+  }catch(e){ toast("Sauvegarde illisible"); }
+};
+
+document.getElementById("wipeBtn").onclick = function(){
+  if(!confirm("Effacer toutes tes données ? Cette action est définitive.")) return;
+  state = { periods: [], weights: [] };
+  save(); renderAll(); toast("Tout a été effacé");
+};
+
+/* ---------- init ---------- */
+load();
+document.getElementById("wDate").value = today();
+document.getElementById("pDate").value = today();
+renderAll();
+
+})();
+</script>
+</body>
+</html>
